@@ -1,0 +1,102 @@
+<!doctype>
+<html>
+	<head>
+		<title>Clone War - Github game off entry by @murz</title>
+		<link href='http://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="styles/game.css" />
+	</head>
+	<body>
+		<div id="loading">Loading...</div>
+		<canvas width="650" height="650" id="game-canvas">
+			 You do not have a canvas enabled browser
+		</canvas>
+		<div id="dialog-holder"></div>
+		<p><a href="http://github.com/murz/game-off-2012"><strong>Clone War</strong></a>: A github game-off entry by <a href="http://github.com/murz">@murz</a>.</p>
+		<p>Works best in <a id="chrome" href="http://www.google.com/chrome">Chrome</a>. <a id="readme" href="">README</a></p>
+		<p></p>
+		<p><a id="debug" href="?debug">Debug Mode</a></p>
+		<!-- scripts -->
+		<script type="text/javascript" src="scripts/class.js"></script>
+		<script type="text/javascript" src="scripts/assetmanager.js"></script>
+		<script type="text/javascript" src="scripts/drawable.js"></script>
+		<script type="text/javascript" src="scripts/player.js"></script>
+		<script type="text/javascript" src="scripts/tombstone.js"></script>
+		<script type="text/javascript" src="scripts/bullet.js"></script>
+		<script type="text/javascript" src="scripts/gui.js"></script>
+		<script type="text/javascript" src="scripts/game.js"></script>
+
+		<!-- maps -->
+		<script type="text/javascript" src="maps/grass.js"></script>
+
+		<!-- load assets and start the game loop -->
+		<script type="text/javascript">
+			function start() {
+				document.getElementById("loading").style.display = "none";
+				var canvas = document.getElementById('game-canvas');
+				var game = new Game(canvas, GRASS_MAP);
+				window._game = game;
+				game.loop();
+			}
+
+			assetManager.load(
+				['images/maps/forest.png',
+				 'images/player1.png',
+				 'images/player3.png',
+				 'images/player3dead.png',
+				 'images/guns/m4a1.png',
+				 'images/guns/deagle.png',
+				 'images/guns/shotgun.png',
+				 'images/bullet.jpg',
+				 'images/effects/blood.png',
+				 'images/crosshair.png',
+				 'images/plant.png',
+				 'images/crate.png',
+				 'images/gui/health.png',
+				 'images/gui/weapons.png',
+				 'images/gui/ico_m4a1.png',
+				 'images/gui/ico_deagle.png',
+				 'images/gui/ico_shotgun.png'],
+				 start);
+		</script>
+
+		<div id="dialogs">
+			<div id="dialog-start" class="modal">
+				<div class="content">
+					<div class="close">X</div>
+					<h1>Clone War</h1>
+					<p>An evil genius known as Dr. Git has been building an army of clones to take over the world!</p>
+					<p>As a Navy SEAL, it is your mission to shoot your way through the army of clones and destroy the cloning machines they are guarding.</p>
+					<p>Move as quickly as possible, because the cloning machines will continue to spawn cloned soldiers until you destroy them!</p>
+					<div id='start'>Start New Game</div><br/>
+					<div id='load'>Load Saved Game</div><br/>
+					<div id='ctrls'>View Controls</div><br/>
+				</div>
+			</div>
+			<div id="dialog-controls" class="modal">
+				<div class="content">
+					<h1>Controls</h1>
+					<ul>
+						<li>Move with WSAD or arrow keys.</li>
+						<li>Point and click your mouse to shoot.</li>
+						<li>Press "R" to reload.</li>
+						<li>Press "Q" to switch weapons.</li>
+						</ul>
+					<div id='back'>&larr; Back</div><br/>
+				</div>
+			</div>
+			<div id="dialog-weapons" class="modal">
+				<div class="content">
+					<div class="close">X</div>
+					<p>Select a weapon by clicking or by pressing the listed number.</p>
+					<ol>
+						<li data-gun="images/guns/m4a1.png" id="dialog-weapons-m4a1"><span class="ico">M4A1 Rifle <em>(Press 1 to select)</em></span></li>
+						<!-- <li class="disabled" id="dialog-weapons-deagle"><span class="ico">Desert Eagle <em>(Press 2 to select)</em></span><span class="ammo">Out of ammo<span></span></span></li> -->
+						<li data-gun="images/guns/deagle.png" id="dialog-weapons-deagle"><span class="ico">Desert Eagle <em>(Press 2 to select)</em></span></li>
+						<li data-gun="images/guns/shotgun.png" id="dialog-weapons-shotgun"><span class="ico">Shotgun <em>(Press 3 to select)</em></span></li>
+					</ol>
+					<p>Press "Q" again to close.</p>
+				</div>
+		</div>
+
+	</body>
+</html>

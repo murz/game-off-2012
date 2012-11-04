@@ -1,0 +1,356 @@
+/* line 3, sass/game.scss */
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  text-align: center;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  background: #eee;
+  color: #444;
+}
+
+/* line 16, sass/game.scss */
+p {
+  font-size: 11px;
+}
+
+/* line 18, sass/game.scss */
+strong {
+  background: #f5ff90;
+}
+
+/* line 22, sass/game.scss */
+a:link, a:visited {
+  color: #444;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+/* line 28, sass/game.scss */
+a:hover {
+  text-decoration: underline;
+}
+
+/* line 32, sass/game.scss */
+#game-canvas {
+  width: 650px;
+  height: 650px;
+  margin: 10px 10px;
+  cursor: none;
+}
+
+/* line 39, sass/game.scss */
+#debug {
+  color: #bbb;
+}
+
+/* line 43, sass/game.scss */
+#console-wrap {
+  width: 640px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* line 49, sass/game.scss */
+#console {
+  background: black;
+  opacity: 0.5;
+  color: #fff;
+  position: absolute;
+  /*top:645;*/
+  padding: 2px 4px;
+  font-size: 12px;
+  float: right;
+  right: 0;
+  top: -738px;
+}
+
+/* line 62, sass/game.scss */
+#loading {
+  position: absolute;
+  top: 300px;
+  width: 100%;
+  text-align: center;
+}
+
+/* line 69, sass/game.scss */
+#dialog-holder {
+  margin: 0 auto;
+  width: 650px;
+  position: relative;
+  top: -660px;
+  display: none;
+  height: 0;
+}
+
+/* line 78, sass/game.scss */
+#dialogs {
+  display: none;
+}
+
+/* line 82, sass/game.scss */
+#chrome {
+  font-weight: normal;
+}
+
+/* line 86, sass/game.scss */
+#dialog-holder .close {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  width: 15px;
+  height: 15px;
+  line-height: 15px;
+  color: #fff;
+  cursor: pointer;
+  padding: 5px;
+  background: #444;
+  text-shadow: none;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+  border-radius: 20px;
+  opacity: 0.5;
+  font-family: 'Black Ops One', sans-serif;
+  -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 1px 0 rgba(0, 0, 0, 0.8);
+  -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 1px 0 rgba(0, 0, 0, 0.8);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 1px 0 rgba(0, 0, 0, 0.8);
+}
+
+/* line 104, sass/game.scss */
+#dialog-holder .close:hover {
+  opacity: 0.6;
+}
+
+/* line 108, sass/game.scss */
+.modal {
+  position: absolute;
+  width: 650px;
+  height: 650px;
+  display: block;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #444;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+  z-index: 5;
+  cursor: default;
+}
+
+/* line 120, sass/game.scss */
+#dialog-holder .content {
+  font-weight: bold;
+  background: #aaa;
+  width: 500px;
+  padding: 10px;
+  margin: 0 auto;
+  margin-top: 50px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px black, inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+}
+
+/* line 132, sass/game.scss */
+#dialog-weapons strong {
+  background: transparent;
+}
+
+/* line 137, sass/game.scss */
+#dialog-weapons span {
+  color: #888;
+}
+
+/* line 141, sass/game.scss */
+#dialog-weapons p {
+  font-size: 14px;
+}
+
+/* line 145, sass/game.scss */
+#dialog-weapons ol {
+  margin: 0;
+  padding: 0;
+}
+
+/* line 150, sass/game.scss */
+#dialog-weapons ol li {
+  display: inline-block;
+  width: 400px;
+  margin: 0 0 10px;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #ececec), color-stop(100%, #aaaaaa));
+  background-image: -webkit-linear-gradient(#ececec, #aaaaaa);
+  background-image: -moz-linear-gradient(#ececec, #aaaaaa);
+  background-image: -o-linear-gradient(#ececec, #aaaaaa);
+  background-image: linear-gradient(#ececec, #aaaaaa);
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  border-radius: 2px;
+  -webkit-box-shadow: inset 0 1px 0 white;
+  -moz-box-shadow: inset 0 1px 0 white;
+  box-shadow: inset 0 1px 0 white;
+  padding: 10px;
+  border: 1px solid #888;
+  position: relative;
+}
+
+/* line 162, sass/game.scss */
+#dialog-weapons ol li .ico {
+  height: 78px;
+  line-height: 78px;
+  display: block;
+}
+
+/* line 168, sass/game.scss */
+#dialog-weapons ol li.disabled .ico {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+/* line 173, sass/game.scss */
+#dialog-weapons ol li .ammo {
+  background: #ff4c19;
+  color: #fff;
+  position: absolute;
+  right: -5px;
+  top: 8px;
+  padding: 5px;
+  text-shadow: 0 1px #000;
+  opacity: 0.8;
+}
+
+/* line 184, sass/game.scss */
+#dialog-weapons ol li .ammo span {
+  position: absolute;
+  width: 4px;
+  height: 7px;
+  background: url(../images/gui/ribbon.png) no-repeat;
+  display: block;
+  bottom: -7px;
+  right: 0;
+}
+
+/* line 194, sass/game.scss */
+#dialog-weapons-m4a1 .ico {
+  background: url(../images/gui/ico_m4a1_black.png) no-repeat;
+}
+
+/* line 198, sass/game.scss */
+#dialog-weapons-deagle .ico {
+  background: url(../images/gui/ico_deagle_black.png) no-repeat;
+}
+
+/* line 202, sass/game.scss */
+#dialog-weapons-shotgun .ico {
+  background: url(../images/gui/ico_shotgun_black.png) no-repeat;
+}
+
+/* line 207, sass/game.scss */
+#dialog-weapons ol li:hover {
+  border: 1px solid #444;
+  cursor: pointer;
+}
+
+/* line 212, sass/game.scss */
+#dialog-weapons ol li.disabled:hover {
+  cursor: default;
+  border: 1px solid #888;
+}
+
+/* line 217, sass/game.scss */
+#dialog-start .content {
+  min-height: 350px;
+}
+
+/* line 221, sass/game.scss */
+#dialog-start p {
+  font-size: 20px;
+  font-weight: normal;
+}
+
+/* line 229, sass/game.scss */
+#dialog-start #start,
+#dialog-start #load,
+#dialog-start #ctrls,
+#dialog-controls #back {
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #4ea54e), color-stop(100%, #275026));
+  background-image: -webkit-linear-gradient(#4ea54e, #275026);
+  background-image: -moz-linear-gradient(#4ea54e, #275026);
+  background-image: -o-linear-gradient(#4ea54e, #275026);
+  background-image: linear-gradient(#4ea54e, #275026);
+  padding: 10px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  -ms-border-radius: 3px;
+  -o-border-radius: 3px;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 0px rgba(255, 255, 255, 0.5);
+  color: #e8ffe1;
+  text-shadow: 0 -1px 0 black;
+  display: inline-block;
+  margin-bottom: 5px;
+  width: 300px;
+  border: 1px solid #1d3f1e;
+  font-weight: lighter;
+}
+
+/* line 244, sass/game.scss */
+#dialog-start,
+#dialog-controls {
+  font-family: 'Black Ops One', sans-serif;
+  font-weight: lighter;
+}
+
+/* line 250, sass/game.scss */
+#dialog-start h1,
+#dialog-controls h1 {
+  margin-top: 10px;
+  font-weight: lighter;
+}
+
+/* line 257, sass/game.scss */
+#dialog-start #load,
+#dialog-start #ctrls,
+#dialog-controls #back {
+  color: #ddd;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #999999), color-stop(100%, #555555));
+  background-image: -webkit-linear-gradient(#999999, #555555);
+  background-image: -moz-linear-gradient(#999999, #555555);
+  background-image: -o-linear-gradient(#999999, #555555);
+  background-image: linear-gradient(#999999, #555555);
+  border: 1px solid #444;
+}
+
+/* line 265, sass/game.scss */
+#dialog-start #load:hover,
+#dialog-start #ctrls:hover,
+#dialog-controls #back:hover {
+  cursor: pointer;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #bbbbbb), color-stop(100%, #777777));
+  background-image: -webkit-linear-gradient(#bbbbbb, #777777);
+  background-image: -moz-linear-gradient(#bbbbbb, #777777);
+  background-image: -o-linear-gradient(#bbbbbb, #777777);
+  background-image: linear-gradient(#bbbbbb, #777777);
+  border: 1px solid #666;
+}
+
+/* line 271, sass/game.scss */
+#dialog-start #start:hover {
+  cursor: pointer;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #60cd62), color-stop(100%, #387a3b));
+  background-image: -webkit-linear-gradient(#60cd62, #387a3b);
+  background-image: -moz-linear-gradient(#60cd62, #387a3b);
+  background-image: -o-linear-gradient(#60cd62, #387a3b);
+  background-image: linear-gradient(#60cd62, #387a3b);
+  border: 1px solid #347237;
+}
+
+/* line 277, sass/game.scss */
+#dialog-start img {
+  float: left;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+  height: 300px;
+  margin-right: 10px;
+}

@@ -1,0 +1,282 @@
+@import "compass/css3";
+
+body {
+	font-family:'Helvetica Neue', Arial, sans-serif;
+	text-align: center;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	background:#eee;
+	color:#444;
+}
+
+p { font-size:11px;}
+
+strong {
+	background:#f5ff90;
+}
+
+a:link, a:visited {
+	color: #444;
+	text-decoration:none;
+	font-weight:bold;
+}
+
+a:hover {
+	text-decoration:underline;
+}
+
+#game-canvas {
+	width: 650px;
+	height: 650px;
+	margin:10px 10px;
+	cursor: none;
+}
+
+#debug {
+	color: #bbb;
+}
+
+#console-wrap {
+	width: 640px;
+	margin: 0 auto;
+	position:relative;
+}
+
+#console {
+	background:black;
+	opacity:0.5;
+	color:#fff;
+	position:absolute;
+	/*top:645;*/
+	padding:2px 4px;
+	font-size:12px;
+	float:right;
+	right:0;
+	top:-738px;
+}
+
+#loading {
+	position:absolute;
+	top:300px;
+	width:100%;
+	text-align: center;
+}
+
+#dialog-holder {
+	margin:0 auto;
+	width:650px;
+	position:relative;
+	top:-660px;
+	display:none;
+	height: 0;
+}
+
+#dialogs {
+	display: none;
+}
+
+#chrome {
+	font-weight: normal;
+}
+
+#dialog-holder .close {
+	position:absolute;
+	right:10px;
+	top: 10px;
+	width:15px;
+	height:15px;
+	line-height:15px;
+	color:#fff;
+	cursor:pointer;
+	padding:5px;
+	background:#444;
+	text-shadow: none;
+	@include border-radius(20px);
+	opacity:0.5;
+	font-family:'Black Ops One', sans-serif;
+	@include box-shadow(0 1px 0 rgba(255,255,255,0.9), inset 0 1px 0 rgba(0,0,0,0.8))
+}
+
+#dialog-holder .close:hover {
+	opacity:0.6;
+}
+
+.modal {
+	position: absolute;
+	width:650px;
+	height:650px;
+	display:block;
+	background-color: rgba(0,0,0,0.6);
+	color: #444;
+	text-shadow:0 1px 0 rgba(255,255,255,0.8);
+	z-index:5;
+	cursor:default;
+}
+
+#dialog-holder .content {
+	font-weight:bold;
+	background: #aaa;
+	width:500px;
+	padding:10px;
+	margin:0 auto;
+	margin-top:50px;
+	border-radius:10px;
+	box-shadow:0 0 10px rgba(0,0,0,1), inset 0 1px 0 rgba(255,255,255,0.8);
+	position:relative;
+}
+
+#dialog-weapons strong {
+	background: transparent;
+
+}
+
+#dialog-weapons span {
+	color: #888;
+}
+
+#dialog-weapons p {
+	font-size:14px;
+}
+
+#dialog-weapons ol {
+	margin:0;
+	padding:0;
+}
+
+#dialog-weapons ol li {
+	display:inline-block;
+	width:400px;
+	margin:0 0 10px;
+	@include background-image(linear-gradient(#ececec, #aaa));
+	@include border-radius(2px);
+	@include box-shadow(inset 0 1px 0 #fff);
+	padding:10px;
+	border:1px solid #888;
+	position: relative;
+}
+
+#dialog-weapons ol li .ico {
+	height:78px;
+	line-height:78px;
+	display:block;
+}
+
+#dialog-weapons ol li.disabled .ico {
+	opacity:0.4;
+	text-decoration: line-through;
+}
+
+#dialog-weapons ol li .ammo {
+	background: #ff4c19;
+	color: #fff;
+	position: absolute;
+	right:-5px;
+	top: 8px;
+	padding:5px;
+	text-shadow:0 1px #000;
+	opacity:0.8;
+}
+
+#dialog-weapons ol li .ammo span {
+	position:absolute;
+	width:4px;
+	height:7px;
+	background:url(../images/gui/ribbon.png) no-repeat;
+	display:block;
+	bottom:-7px;
+	right:0;
+}
+
+#dialog-weapons-m4a1 .ico {
+	background:url(../images/gui/ico_m4a1_black.png) no-repeat;
+}
+
+#dialog-weapons-deagle .ico {
+	background:url(../images/gui/ico_deagle_black.png) no-repeat;
+}
+
+#dialog-weapons-shotgun .ico {
+	background:url(../images/gui/ico_shotgun_black.png) no-repeat;
+}
+
+
+#dialog-weapons ol li:hover {
+	border:1px solid #444;
+	cursor:pointer;
+}
+
+#dialog-weapons ol li.disabled:hover {
+	cursor:default;
+	border:1px solid #888;
+}
+
+#dialog-start .content {
+	min-height:350px;
+}
+
+#dialog-start p {
+	font-size:20px;
+	font-weight: normal;
+}
+
+#dialog-start #start,
+#dialog-start #load,
+#dialog-start #ctrls,
+#dialog-controls #back {
+	@include background-image(linear-gradient(#4ea54e, #275026));
+	padding:10px;
+	@include border-radius(3px);
+	box-shadow: inset 0 1px 0px rgba(255,255,255,0.5);
+	color:#e8ffe1;
+	text-shadow:0 -1px 0 #000;
+	display:inline-block;
+	margin-bottom:5px;
+	width:300px;
+	border:1px solid #1d3f1e;
+	font-weight:lighter;
+}
+
+#dialog-start,
+#dialog-controls {
+	font-family:'Black Ops One', sans-serif;
+	font-weight:lighter;
+}
+
+#dialog-start h1,
+#dialog-controls h1 {
+	margin-top:10px;
+	font-weight:lighter;
+}
+
+#dialog-start #load,
+#dialog-start #ctrls,
+#dialog-controls #back {
+	color:#ddd;
+	@include background-image(linear-gradient(#999, #555));
+	border:1px solid #444;
+}
+
+#dialog-start #load:hover,
+#dialog-start #ctrls:hover,
+#dialog-controls #back:hover {
+	cursor:pointer;
+	@include background-image(linear-gradient(#bbb, #777));
+	border:1px solid #666;
+}
+
+#dialog-start #start:hover {
+	cursor: pointer;
+	@include background-image(linear-gradient(#60cd62, #387a3b));
+	border:1px solid #347237;
+}
+
+#dialog-start img {
+	float: left;
+	box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+	height:300px;
+	margin-right:10px;
+}
