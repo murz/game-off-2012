@@ -55,6 +55,7 @@ var Player = Drawable.extend({
 		this.ctx.translate(this.x,this.y);
 		if (window.DEBUG) {
 			this.ctx.fillText("("+this.x+","+this.y+")", 0, -20);
+			this.ctx.fillText("("+this.vX+","+this.vY+")", 0, -40);
 		}
 		this.ctx.rotate(this.angle);
 		this.ctx.drawImage(

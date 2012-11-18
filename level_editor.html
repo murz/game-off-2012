@@ -1,0 +1,59 @@
+<!doctype>
+<html>
+	<head>
+		<title>Clone War - Github game off entry by @murz</title>
+		<link href='http://fonts.googleapis.com/css?family=Black+Ops+One' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="styles/game.css" />
+	</head>
+	<body>
+		<div id="loading">Loading...</div>
+		<canvas width="650" height="3250" id="editor-canvas">
+			 You do not have a canvas enabled browser
+		</canvas>
+		<div id="dialog-holder"></div>
+		<p><a href="http://github.com/murz/game-off-2012"><strong>Clone War</strong></a>: Level Editor.</p>
+		<!-- scripts -->
+		<script type="text/javascript" src="scripts/class.js"></script>
+		<script type="text/javascript" src="scripts/assetmanager.js"></script>
+		<script type="text/javascript" src="scripts/drawable.js"></script>
+		<script type="text/javascript" src="scripts/player.js"></script>
+		<script type="text/javascript" src="scripts/tombstone.js"></script>
+		<script type="text/javascript" src="scripts/bullet.js"></script>
+		<script type="text/javascript" src="scripts/gui.js"></script>
+		<script type="text/javascript" src="scripts/editor.js"></script>
+
+		<!-- maps -->
+		<script type="text/javascript" src="maps/grass.js"></script>
+
+		<!-- load assets and start the game loop -->
+		<script type="text/javascript">
+			function start() {
+				document.getElementById("loading").style.display = "none";
+				var canvas = document.getElementById('editor-canvas');
+				var editor = new LevelEditor(canvas, GRASS_MAP);
+				editor.loop();
+			}
+
+			assetManager.load(
+				['images/maps/forest.png',
+				 'images/player1.png',
+				 'images/player3.png',
+				 'images/player3dead.png',
+				 'images/guns/m4a1.png',
+				 'images/guns/deagle.png',
+				 'images/guns/shotgun.png',
+				 'images/bullet.jpg',
+				 'images/effects/blood.png',
+				 'images/crosshair.png',
+				 'images/plant.png',
+				 'images/crate.png',
+				 'images/gui/health.png',
+				 'images/gui/weapons.png',
+				 'images/gui/ico_m4a1.png',
+				 'images/gui/ico_deagle.png',
+				 'images/gui/ico_shotgun.png'],
+				 start);
+		</script>
+
+	</body>
+</html>

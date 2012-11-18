@@ -16,6 +16,7 @@ var Game = Class.extend({
 	gui: null,
 	bullets: [],
 	gameObjects: [],
+	blockingAreas: [],
 	players: [],
 	tombstones: [],
 	downKeys: {},
@@ -119,7 +120,7 @@ var Game = Class.extend({
 			document.getElementById("debug").onclick = function() {
 				window.location = window.location.href.split("?")[0];
 				return false;
-			}
+			};
 			var consoleWrap = document.createElement("div");
 			consoleWrap.id = "console-wrap";
 			this.console = document.createElement("div");
@@ -169,6 +170,11 @@ var Game = Class.extend({
 			this.gameObjects.push(d);
 		}
 
+		// blocks
+		for (var i = 0; i < this.map.blockingAreas.length; i++) {
+			this.blockingAreas.push(this.map.blockingAreas[i]);
+		}
+
 	},
 
 	loop: function() {
@@ -213,9 +219,11 @@ var Game = Class.extend({
 					var sY = Math.sin(player.angle) * M4A1_BULLET_SPEED;
 					var sX = Math.cos(player.angle) * M4A1_BULLET_SPEED;
 
+					var playerVY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
+
 					// determine starting position of bullet
-					bullet.x = player.x + (sX * 3.5);
-					bullet.y = player.y + (sY * 3.5);
+					bullet.vX = player.vX + (sX * 3.55);
+					bullet.vY = player.vY - (sY * 3.5);
 
 					this.bullets.push({
 						drawable: bullet,
@@ -256,8 +264,12 @@ var Game = Class.extend({
 				}
 				continue;
 			}
-			bullet.drawable.x += bullet.speedX;
-			bullet.drawable.y += bullet.speedY;
+
+			bullet.drawable.vX += bullet.speedX;
+			bullet.drawable.vY -= bullet.speedY;
+
+			bullet.drawable.x = bullet.drawable.vX;
+			bullet.drawable.y = this.viewportY + WORLD_HEIGHT - bullet.drawable.vY;
 
 			// detect bullet collisions
 			if (this.collidesWithObject(bullet.drawable.x, bullet.drawable.y)) {
@@ -403,10 +415,11 @@ var Game = Class.extend({
 		var sY = Math.sin(this.player.angle) * M4A1_BULLET_SPEED;
 		var sX = Math.cos(this.player.angle) * M4A1_BULLET_SPEED;
 
-		// determine starting position of bullet
-		bullet.x = this.player.x + (sX * 3.5);
-		bullet.y = this.player.y + (sY * 3.5);
+		var playerVY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
 
+		// determine starting position of bullet
+		bullet.vX = this.player.x + (sX * 3.55);
+		bullet.vY = playerVY - (sY * 3.5);
 		this.bullets.push({
 			drawable: bullet,
 			speedX: sX,
@@ -423,9 +436,11 @@ var Game = Class.extend({
 				var sY = Math.sin(bullet.angle) * M4A1_BULLET_SPEED;
 				var sX = Math.cos(bullet.angle) * M4A1_BULLET_SPEED;
 
+				var playerVY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
+
 				// determine starting position of bullet
-				bullet.x = this.player.x + (sX * 3.5);
-				bullet.y = this.player.y + (sY * 3.5);
+				bullet.vX = this.player.x + (sX * 3.55);
+				bullet.vY = playerVY - (sY * 3.5);
 
 				this.bullets.push({
 					drawable: bullet,
@@ -451,6 +466,16 @@ var Game = Class.extend({
 				newX <= x + go.getBounds().width &&
 				newY >= y &&
 				newY <= y + go.getBounds().height) {
+				return true;
+			}
+		}
+		for (var i = 0; i < this.blockingAreas.length; i++) {
+			var x = this.blockingAreas[i].x;
+			var y = this.viewportY + this.blockingAreas[i].y;
+			if (newX >= x &&
+				newX <= x + this.blockingAreas[i].width &&
+				newY >= y &&
+				newY <= y + this.blockingAreas[i].height) {
 				return true;
 			}
 		}
@@ -612,9 +637,11 @@ var Game = Class.extend({
 			var sY = Math.sin(this.player.angle) * M4A1_BULLET_SPEED;
 			var sX = Math.cos(this.player.angle) * M4A1_BULLET_SPEED;
 
+			var playerVY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
+
 			// determine starting position of bullet
-			bullet.x = this.player.x + (sX * 3.5);
-			bullet.y = this.player.y + (sY * 3.5);
+			bullet.vX = this.player.x + (sX * 3.55);
+			bullet.vY = playerVY - (sY * 3.5);
 
 			this.bullets.push({
 				drawable: bullet,
