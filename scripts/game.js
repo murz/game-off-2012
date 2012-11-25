@@ -34,6 +34,8 @@ var Game = Class.extend({
 	dialogHolder: null,
 	dialogsEl:null,
 	sounds: {},
+	bulletStrengthModifier: 0,
+
 
 	init: function(canvas, map) {
 		this.canvas = canvas;
@@ -101,9 +103,19 @@ var Game = Class.extend({
 			self.dialog.addEventListener("click", function(evt) {
 					switch (evt.target.id) {
 						case 'start':
-							self.closeDialog();
-							break;
-						case 'load':
+							self.showDialog("dialog-diff", function() {
+								self.dialog.addEventListener("click", function(evt) {
+									switch (evt.target.id) {
+										case 'hard':
+
+											break;
+										case 'medium':
+											break;
+										case 'easy':
+											break;
+									}
+								});
+							});
 							break;
 						case 'ctrls':
 							self.closeDialog();
@@ -120,7 +132,7 @@ var Game = Class.extend({
 				});
 			});
 		};
-		//openStartDlg();
+		openStartDlg();
 
 		
 
@@ -278,9 +290,9 @@ var Game = Class.extend({
 			var victim = this.collidesWithPlayer(bullet.drawable.x, bullet.drawable.y);
 			if (victim) {
 				if (victim.armor > 0) {
-					victim.armor -= bullet.drawable.strength;
+					victim.armor -= (bullet.drawable.strength + this.bulletStrengthModifier);
 				} else {
-					victim.hp -= bullet.drawable.strength;
+					victim.hp -= (bullet.drawable.strength + this.bulletStrengthModifier);
 				}
 				this.bullets[b].drawable.hit();
 				if (victim.npc && victim.asleep) {
