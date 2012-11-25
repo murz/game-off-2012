@@ -190,6 +190,12 @@ var LevelEditor = Class.extend({
 			this.ctx.fillRect(0, 0, area.width, area.height);
 			this.ctx.restore();
 		}
+		
+		this.ctx.save();
+		this.ctx.globalAlpha = 0.5;
+		this.ctx.translate(this.map.bombZone.x,this.map.bombZone.y);
+		this.ctx.fillRect(0, 0, this.map.bombZone.width, this.map.bombZone.height);
+		this.ctx.restore();
 
 	},
 

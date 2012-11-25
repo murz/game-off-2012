@@ -1,5 +1,11 @@
 window.GRASS_MAP = {
 	bg: 'images/maps/forest.png',
+	bombZone: {
+		x: 0,
+		y: 0,
+		width: 650,
+		height: 275
+	},
 	npcs: [
 		{
 			img: 'images/player3.png',

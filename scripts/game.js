@@ -10,6 +10,7 @@ var Game = Class.extend({
 	map: null,
 	ctx: null,
 	canvas: null,
+	audioCtx:null,
 	console: null,
 	player: null,
 	crosshair: null,
@@ -32,10 +33,20 @@ var Game = Class.extend({
 	viewportY: 0,
 	dialogHolder: null,
 	dialogsEl:null,
+	sounds: {},
 
 	init: function(canvas, map) {
 		this.canvas = canvas;
 		this.ctx = canvas.getContext('2d');
+
+		try {
+			this.audioCtx = new webkitAudioContext();
+			this.loadSound('m4-bullet', 'sounds/m4a1.mp3');
+			this.loadSound('m4-reload', 'sounds/reload.mp3');
+			this.loadSound('deagle-bullet', 'sounds/deagle_shot.mp3');
+		} catch (e) {
+			alert('HTML5 Web Audio API is not supported in this browser. You can play the game but it will have no sound :(');
+		}
 
 		this.map = map;
 
@@ -212,24 +223,10 @@ var Game = Class.extend({
 				player.face(this.player.x, this.player.y);
 				if (player.firingDelay == player.firingSpeed) {
 					player.firingDelay = 0;
-					var bullet = new Bullet(this.ctx, 'images/bullet.jpg');
-					bullet.width = 4;
-					bullet.height = 2;
-					bullet.angle = player.angle;
-					var sY = Math.sin(player.angle) * M4A1_BULLET_SPEED;
-					var sX = Math.cos(player.angle) * M4A1_BULLET_SPEED;
-
-					var playerVY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
-
-					// determine starting position of bullet
-					bullet.vX = player.vX + (sX * 3.55);
-					bullet.vY = player.vY - (sY * 3.5);
-
-					this.bullets.push({
-						drawable: bullet,
-						speedX: sX,
-						speedY: sY
-					});
+					this.fireBullet(player.x,
+									player.y,
+									player.angle,
+									player.gun);
 				} else {
 					player.firingDelay++;
 				}
@@ -402,23 +399,19 @@ var Game = Class.extend({
 		this.mouseDown = true;
 	},
 
-	handleMouseClick: function(evt) {
-		if (this.player.getGun().ammo <= 0 ||
-			this.player.reloading) {
-			return;
-		}
+	fireBullet: function(x, y, angle, gun) {
 		var bullet = new Bullet(this.ctx, 'images/bullet.jpg');
 		bullet.width = 4;
 		bullet.height = 2;
-		bullet.angle = this.player.angle;
+		bullet.angle = angle;
 
-		var sY = Math.sin(this.player.angle) * M4A1_BULLET_SPEED;
-		var sX = Math.cos(this.player.angle) * M4A1_BULLET_SPEED;
+		var sY = Math.sin(angle) * M4A1_BULLET_SPEED;
+		var sX = Math.cos(angle) * M4A1_BULLET_SPEED;
 
-		var playerVY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
+		var playerVY = (WORLD_HEIGHT + this.viewportY) - y;
 
 		// determine starting position of bullet
-		bullet.vX = this.player.x + (sX * 3.55);
+		bullet.vX = x + (sX * 3.55);
 		bullet.vY = playerVY - (sY * 3.5);
 		this.bullets.push({
 			drawable: bullet,
@@ -426,27 +419,35 @@ var Game = Class.extend({
 			speedY: sY
 		});
 
+		// switch (gun) {
+		// 	case 'images/guns/deagle.png':
+		// 		this.playSound('deagle-bullet');
+		// 		break;
+		// 	case 'images/guns/shotgun.png':
+		// 	case 'images/guns/m4a1.png':
+		// 	default:
+				this.playSound('m4-bullet');
+		// }
+	},
+
+	handleMouseClick: function(evt) {
+		if (this.player.getGun().ammo <= 0 ||
+			this.player.reloading) {
+			return;
+		}
+
+		this.fireBullet(this.player.x,
+						this.player.y,
+						this.player.angle,
+						this.player.gun);
+		
+
 		if (this.player.gun == 'images/guns/shotgun.png') {
 			for (var i = -2; i < 2; i++) {
-				bullet = new Bullet(this.ctx, 'images/bullet.jpg');
-				bullet.width = 4;
-				bullet.height = 2;
-				bullet.angle = this.player.angle + (0.1*i);
-
-				var sY = Math.sin(bullet.angle) * M4A1_BULLET_SPEED;
-				var sX = Math.cos(bullet.angle) * M4A1_BULLET_SPEED;
-
-				var playerVY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
-
-				// determine starting position of bullet
-				bullet.vX = this.player.x + (sX * 3.55);
-				bullet.vY = playerVY - (sY * 3.5);
-
-				this.bullets.push({
-					drawable: bullet,
-					speedX: sX,
-					speedY: sY
-				});
+				this.fireBullet(this.player.x,
+						this.player.y,
+						this.player.angle + (0.1*i),
+						this.player.gun);
 			}
 		}
 
@@ -547,8 +548,10 @@ var Game = Class.extend({
 
 		if (this.downKeys[82]) { /* R was pressed */
 			if (this.player.getGun().ammo < this.player.getGun().clipSize &&
-				this.player.getGun().totalAmmo > 0) {
+				this.player.getGun().totalAmmo > 0 &&
+				!this.player.reloading) {
 				this.player.reload();
+				this.playSound('m4-reload');
 			}
 		}
 
@@ -629,25 +632,10 @@ var Game = Class.extend({
 
 			this.bulletDelay = M4A1_BULLET_DELAY;
 
-			var bullet = new Bullet(this.ctx, 'images/bullet.jpg');
-			bullet.width = 4;
-			bullet.height = 2;
-			bullet.angle = this.player.angle;
-
-			var sY = Math.sin(this.player.angle) * M4A1_BULLET_SPEED;
-			var sX = Math.cos(this.player.angle) * M4A1_BULLET_SPEED;
-
-			var playerVY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
-
-			// determine starting position of bullet
-			bullet.vX = this.player.x + (sX * 3.55);
-			bullet.vY = playerVY - (sY * 3.5);
-
-			this.bullets.push({
-				drawable: bullet,
-				speedX: sX,
-				speedY: sY
-			});
+			this.fireBullet(this.player.x,
+							this.player.y,
+							this.player.angle,
+							this.player.gun);
 
 			this.player.getGun().ammo--;
         }
@@ -663,7 +651,7 @@ var Game = Class.extend({
 				self.closeDialog();
 			}
 		});
-		if (typeof fn == 'function'){
+		if (typeof fn == 'function') {
 			fn.call(this);
 		}
 	},
@@ -675,6 +663,36 @@ var Game = Class.extend({
 		this.dialog = null;
 		this.dialogHolder.innerHTML = "";
 		this.dialogHolder.style.display = "none";
+	},
+
+	loadSound: function(key, url) {
+		var self = this;
+		var request = new XMLHttpRequest();
+		request.open('GET', url, true);
+		request.responseType = 'arraybuffer';
+
+		// Decode asynchronously
+		request.onload = function() {
+			self.audioCtx.decodeAudioData(request.response, function(buffer) {
+				window.console.log(self.sounds);
+				window.console.log(key);
+				self.sounds[key] = buffer;
+			}, function() { /* oops! */ });
+		};
+
+		request.send();
+	},
+
+	playSound: function(key) {
+		if (!(key in this.sounds)) {
+			return;
+		}
+		var buffer = this.sounds[key];
+
+		var source = this.audioCtx.createBufferSource(); // creates a sound source
+		source.buffer = buffer;                    // tell the source which sound to play
+		source.connect(this.audioCtx.destination);       // connect the source to the context's destination (the speakers)
+		source.noteOn(0);                          // play the source now
 	}
 
 
