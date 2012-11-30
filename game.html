@@ -13,16 +13,15 @@
 		<div id="dialog-holder"></div>
 		<p><a href="http://github.com/murz/game-off-2012"><strong>Clone War</strong></a>: A github game-off entry by <a href="http://github.com/murz">@murz</a>.</p>
 		<p>Works best in <a id="chrome" href="http://www.google.com/chrome">Chrome</a>. <a id="readme" href="">README</a></p>
-		<p style="text-align:left;width:190px;margin:0 auto;padding:5px;background:#fff;"><span style="color:#777">Controls:</span><br/>
+		<!-- <p style="text-align:left;width:190px;margin:0 auto;padding:5px;background:#fff;"><span style="color:#777">Controls:</span><br/>
 			- Move with WSAD or arrow keys.<br/>
 			- Point and click your mouse to shoot.<br/>
 			- Press "R" to reload.<br/>
 			- Press "Q" to switch weapons.
-		</p>
+		</p> -->
 		<!-- scripts -->
 		<script type="text/javascript" src="scripts/class.js"></script>
 		<script type="text/javascript" src="scripts/assetmanager.js"></script>
-		<script type="text/javascript" src="scripts/mozart/mozart.js"></script>
 		<script type="text/javascript" src="scripts/drawable.js"></script>
 		<script type="text/javascript" src="scripts/player.js"></script>
 		<script type="text/javascript" src="scripts/tombstone.js"></script>
@@ -31,27 +30,31 @@
 		<script type="text/javascript" src="scripts/game.js"></script>
 
 		<!-- maps -->
-		<script type="text/javascript" src="maps/grass.js"></script>
+		<script type="text/javascript" src="maps/forest.js"></script>
+		<script type="text/javascript" src="maps/warehouse.js"></script>
 
 		<!-- load assets and start the game loop -->
 		<script type="text/javascript">
 			function start() {
 				document.getElementById("loading").style.display = "none";
 				var canvas = document.getElementById('game-canvas');
-				var game = new Game(canvas, GRASS_MAP);
+				var game = new Game(canvas, FOREST_MAP);
 				window._game = game;
 				game.loop();
 			}
 
 			assetManager.load(
 				['images/maps/forest.png',
+				 'images/maps/warehouse.png',
 				 'images/player1.png',
 				 'images/player3.png',
+				 'images/player1dead.png',
 				 'images/player3dead.png',
 				 'images/guns/m4a1.png',
 				 'images/guns/deagle.png',
 				 'images/guns/shotgun.png',
 				 'images/bullet.jpg',
+				 'images/bomb.png',
 				 'images/effects/blood.png',
 				 'images/crosshair.png',
 				 'images/plant.png',
@@ -67,10 +70,9 @@
 		<div id="dialogs">
 			<div id="dialog-start" class="modal">
 				<div class="content">
-					<div class="close">X</div>
 					<h1>Clone War</h1>
 					<div class="desc">
-						<p>An evil genius known as Dr. Git has been building an army of clones to take over the world!</p>
+						<p>An evil genius known as Dr. Git has been building an army of clones in a plot to take over the world!</p>
 						<p>As a Navy SEAL, it is your mission to shoot your way through the army of clones and destroy the cloning machines they are guarding.</p>
 						<p>Move as quickly as possible, because the cloning machines will continue to spawn cloned soldiers until you destroy them!</p>
 					</div>
@@ -78,15 +80,64 @@
 					<div id='ctrls'>View Controls</div><br/>
 				</div>
 			</div>
+			<div id="dialog-rip" class="modal">
+				<div class="content">
+					<h1>Clone War</h1>
+					<div class="desc">
+						<p>You Died! Game Over! <span>(Tip: Your armor is replinished at the start of every level, but your health is not!)</span></p>
+					</div>
+					<div id='start'>Start New Game</div><br/>
+					<div id='ctrls'>View Controls</div><br/>
+				</div>
+			</div>
+			<div id="dialog-victory-first" class="modal">
+				<div class="content">
+					<h1>Clone War</h1>
+					<div class="desc">
+						<p>Level Cleared <span>(TIP: your armor is replenished at the start of each level, but your health is not!)</span></p>
+					</div>
+					<div id='start'>Start Next Level</div><br/>
+					<div id='ctrls'>View Controls</div><br/>
+				</div>
+			</div>
+			<div id="dialog-victory-last" class="modal">
+				<div class="content">
+					<h1>Clone War</h1>
+					<div class="desc">
+						<p>All Levels Cleared <span>Congratulations!</span></p>
+					</div>
+					<div id='start'>Play Again</div><br/>
+					<div id='ctrls'>View Controls</div><br/>
+				</div>
+			</div>
+			<div id="dialog-pause" class="modal">
+				<div class="content">
+					<h1>Clone War</h1>
+					<div class="desc">
+						<p>The game is paused.</p>
+					</div>
+					<div id='resume'>Resume</div><br/>
+					<div id='ctrls'>View Controls</div><br/>
+				</div>
+			</div>
+			<div id="dialog-diff" class="modal">
+				<div class="content">
+					<h1>Select Difficulty</h1>
+					<div id='easy'>Easy</div><br/>
+					<div id='medium'>Medium</div><br/>
+					<div id='hard'>Hard</div><br/>
+				</div>
+			</div>
 			<div id="dialog-controls" class="modal">
 				<div class="content">
 					<h1>Controls</h1>
-					<ul>
-						<li>Move with WSAD or arrow keys.</li>
-						<li>Point and click your mouse to shoot.</li>
-						<li>Press "R" to reload.</li>
-						<li>Press "Q" to switch weapons.</li>
-						</ul>
+					<div class="desc">
+						<p>Move with WSAD or arrow keys.</p>
+						<p>Point and click with your mouse to shoot.</p>
+						<p>Press "R" to reload.</p>
+						<p>Press "Q" to switch weapons.</p>
+						<p>Press "E" to plant a bomb <span>(Must be near a clone machine).</span></p>
+					</div>
 					<div id='back'>&larr; Back</div><br/>
 				</div>
 			</div>

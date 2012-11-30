@@ -4,6 +4,8 @@ var M4A1_BULLET_DELAY = 8;
 var HEIGHT = 650;
 var WIDTH = 650;
 var WORLD_HEIGHT = 3250;
+var BOMB_DELAY = 240;
+var CLONE_DELAY = 475;
 
 var Game = Class.extend({
 
@@ -17,6 +19,7 @@ var Game = Class.extend({
 	gui: null,
 	bullets: [],
 	gameObjects: [],
+	nbGameObjects: [],
 	blockingAreas: [],
 	players: [],
 	tombstones: [],
@@ -35,6 +38,16 @@ var Game = Class.extend({
 	dialogsEl:null,
 	sounds: {},
 	bulletStrengthModifier: 0,
+	npcHitpointModifier: 0,
+	gameStarted:false,
+	pause: false,
+	playerAlive: false,
+	bombDelay: -1,
+	plantingBomb: false,
+	bombPlanted: false,
+	exploded: false,
+	cloneTimer: CLONE_DELAY,
+	levelsWon: 0,
 
 
 	init: function(canvas, map) {
@@ -52,23 +65,11 @@ var Game = Class.extend({
 
 		this.map = map;
 
-		this.player = new Player(this.ctx, 'images/player1.png');
-		this.player.width = 42;
-		this.player.height = 42;
-		this.player.x = 50;
-		this.player.y = HEIGHT - 90;
-		this.player.armor = 100;
-		this.player.gun = 'images/guns/m4a1.png';
-		this.players.push(this.player);
-
 		this.crosshair = new Drawable(this.ctx, 'images/crosshair.png');
 		this.crosshair.width = 72;
 		this.crosshair.height = 72;
 
 		this.gui = new Gui(this.ctx);
-
-		this.viewportX = 0;
-		this.viewportY = HEIGHT - WORLD_HEIGHT;
 
 		this.initializeMap();
 
@@ -98,52 +99,14 @@ var Game = Class.extend({
 		this.dialogHolder = document.getElementById("dialog-holder");
 		this.dialogsEl = document.getElementById("dialogs");
 
-		var openStartDlg = function() {
-			self.showDialog("dialog-start", function() {
-			self.dialog.addEventListener("click", function(evt) {
-					switch (evt.target.id) {
-						case 'start':
-							self.showDialog("dialog-diff", function() {
-								self.dialog.addEventListener("click", function(evt) {
-									switch (evt.target.id) {
-										case 'hard':
 
-											break;
-										case 'medium':
-											break;
-										case 'easy':
-											break;
-									}
-								});
-							});
-							break;
-						case 'ctrls':
-							self.closeDialog();
-							self.showDialog("dialog-controls", function() {
-								self.dialog.addEventListener("click", function(evt) {
-									if (evt.target.id == 'back') {
-										self.closeDialog();
-										openStartDlg.call(self);
-									}
-								});
-							});
-							break;
-					}
-				});
-			});
-		};
-		openStartDlg();
+		this.openStartDlg();
 
 		
 
 		var url = document.URL;
 		var debug_check = /[?&]debug/i;
 		if (debug_check.exec(url)) {
-			document.getElementById("debug").innerHTML = "&larr; Exit Debug Mode";
-			document.getElementById("debug").onclick = function() {
-				window.location = window.location.href.split("?")[0];
-				return false;
-			};
 			var consoleWrap = document.createElement("div");
 			consoleWrap.id = "console-wrap";
 			this.console = document.createElement("div");
@@ -154,9 +117,31 @@ var Game = Class.extend({
 		}
 	},
 
-	initializeMap: function() {
+	initializeMap: function(opt_hp) {
 
-		// players
+		this.viewportX = 0;
+		this.viewportY = HEIGHT - WORLD_HEIGHT;
+
+		// clear anything that was there.
+		this.players = [];
+		this.nbGameObjects = [];
+		this.gameObjects = [];
+		this.blockingAreas = [];
+
+		// local player
+		this.player = new Player(this.ctx, 'images/player1.png');
+		this.player.width = 42;
+		this.player.height = 42;
+		this.player.x = this.map.startX;
+		this.player.y = HEIGHT - 90;
+		this.player.armor = 100;
+		if (opt_hp) {
+			this.player.hp = opt_hp;
+		}
+		this.player.gun = 'images/guns/m4a1.png';
+		this.players.push(this.player);
+
+		// npc players
 		for (var i = 0; i < this.map.npcs.length; i++) {
 			var npc = this.map.npcs[i];
 			var p = new Player(this.ctx, npc.img);
@@ -165,7 +150,7 @@ var Game = Class.extend({
 			p.vY = npc.y;
 			p.gun = npc.gun;
 			if (npc.hp) {
-				p.hp = npc.hp;
+				p.hp = npc.hp + this.npcHitpointModifier;
 			}
 			if (npc.bounds) {
 				p.bounds = npc.bounds;
@@ -197,6 +182,8 @@ var Game = Class.extend({
 		for (var i = 0; i < this.map.blockingAreas.length; i++) {
 			this.blockingAreas.push(this.map.blockingAreas[i]);
 		}
+
+
 
 	},
 
@@ -232,6 +219,9 @@ var Game = Class.extend({
 			}
 
 			if (!player.asleep) {
+				if (this.player.hp <= 0) {
+					continue;
+				}
 				player.face(this.player.x, this.player.y);
 				if (player.firingDelay == player.firingSpeed) {
 					player.firingDelay = 0;
@@ -291,17 +281,68 @@ var Game = Class.extend({
 			if (victim) {
 				if (victim.armor > 0) {
 					victim.armor -= (bullet.drawable.strength + this.bulletStrengthModifier);
+					if (victim.armor < 0) victim.armor = 0;
 				} else {
 					victim.hp -= (bullet.drawable.strength + this.bulletStrengthModifier);
+					if (victim.hp < 0) victim.hp = 0;
 				}
-				this.bullets[b].drawable.hit();
+				if (this.bullets[b]) this.bullets[b].drawable.hit();
 				if (victim.npc && victim.asleep) {
 					victim.wake();
 				}
 			}
 		}
 
+		this.player.canPlantBomb = this.isInBombZone(this.player.x, this.player.y);
+
+		if (this.plantingBomb && !this.bombPlanted) {
+			if (this.bombDelay < 0) {
+				this.bombDelay = BOMB_DELAY; 
+			}
+			this.bombDelay--;
+			if (this.bombDelay == 0) {
+				this.plantingBomb = false;
+				this.bombDelay = -1;
+				this.bombPlanted = true;
+				var bomb = new Drawable(this.ctx, 'images/bomb.png');
+				bomb.vX = this.player.x;
+				bomb.vY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
+				bomb.width = 28;
+				bomb.height = 22;
+				this.nbGameObjects.push(bomb);
+			}
+		} else if (this.playerAlive && this.bombPlanted && !this.isInBombZone(this.player.x, this.player.y) && !this.exploded) {
+			this.playerAlive = false;
+			this.levelsWon++;
+			if (this.levelsWon > 1) {
+				this.levelsWon = 0;
+				this.map = FOREST_MAP;
+				this.player.hp = 100;
+				this.openLastVictoryDlg();
+			} else {
+				this.map = WAREHOUSE_MAP;
+				this.openFirstVictoryDlg();
+			}
+			this.initializeMap(this.player.hp);
+		}
+
+		if (this.viewportY > -220) {
+			if (this.cloneTimer <= 0) {
+				this.cloneTimer = CLONE_DELAY;
+				var p = new Player(this.ctx, 'images/player3.png');
+				p.npc = true;
+				p.vX = this.map.cloneSpawn.x;
+				p.vY = (WORLD_HEIGHT + this.viewportY) - this.map.cloneSpawn.y;
+				p.gun = 'images/guns/m4a1.png';
+				p.hp = 10 + this.npcHitpointModifier;
+				this.players.push(p);
+			}
+			this.cloneTimer--;
+		}
+
 		this.gui.player = this.player;
+		this.gui.bombDelay = this.bombDelay;
+		this.gui.bombPlanted = this.bombPlanted;
 
 		// calculate fps
 		this.frameCount++;
@@ -320,7 +361,7 @@ var Game = Class.extend({
 
 	render: function() {
 		// tiles
-		this.ctx.drawImage(assetManager.get('images/maps/forest.png'), 0, this.viewportY, 650, 3250);
+		this.ctx.drawImage(assetManager.get(this.map.bg), 0, this.viewportY, 650, 3250);
 
 		// tombstones (dead players)
 		for (var t in this.tombstones) {
@@ -330,9 +371,65 @@ var Game = Class.extend({
 			tombstone.draw();
 			tombstone.deadFrames--;
 			if(tombstone.deadFrames <= 0) {
+				if (!tombstone.npc) {
+					this.resetAmmo();
+					this.map = FOREST_MAP;
+					this.initializeMap();
+					var self = this;
+					var openDeadDlg = function() {
+						self.showDialog("dialog-rip", function() {
+						self.dialog.addEventListener("click", function(evt) {
+								switch (evt.target.id) {
+									case 'start':
+										self.closeDialog();
+										self.showDialog("dialog-diff", function() {
+											self.dialog.addEventListener("click", function(evt) {
+												switch (evt.target.id) {
+													case 'hard':
+														self.bulletStrengthModifier += 40;
+														self.npcHitpointModifier = 40 * 10;
+														break;
+													case 'medium':
+														self.bulletStrengthModifier += 10;
+														self.npcHitpointModifier = 10 * 7;
+														break;
+													case 'easy':
+														break;
+												}
+												self.initializeMap();
+												self.playerAlive = true;
+												self.gameStarted = true;
+												self.closeDialog();
+											});
+										});
+										break;
+									case 'ctrls':
+										self.closeDialog();
+										self.showDialog("dialog-controls", function() {
+											self.dialog.addEventListener("click", function(evt) {
+												if (evt.target.id == 'back') {
+													self.closeDialog();
+													openDeadDlg.call(self);
+												}
+											});
+										});
+										break;
+								}
+							});
+						});
+					};
+					openDeadDlg();
+				}
 				this.tombstones[t] = undefined; // let gc dispose
 				this.tombstones.splice(t, 1); // remove from array
 			}
+		}
+
+		// non-blocking objs
+		for (var go in this.nbGameObjects) {
+			this.nbGameObjects[go].y = this.viewportY + WORLD_HEIGHT - this.nbGameObjects[go].vY;
+			this.nbGameObjects[go].x = this.nbGameObjects[go].vX;
+			this.nbGameObjects[go].draw();
 		}
 
 		// players
@@ -343,6 +440,13 @@ var Game = Class.extend({
 				var tombstone = new Tombstone(this.ctx, 'images/player3dead.png');
 				tombstone.vX = player.vX;
 				tombstone.vY = player.vY;
+				tombstone.npc = player.npc;
+				if (!player.npc) {
+					tombstone.img = 'images/player1dead.png';
+					tombstone.vX = this.player.x;
+					tombstone.vY = (WORLD_HEIGHT + this.viewportY) - this.player.y;
+					this.playerAlive = false;
+				}
 				this.tombstones.push(tombstone);
 				this.players[p] = undefined; // let gc dispose
 				this.players.splice(p, 1); // remove from array
@@ -516,7 +620,182 @@ var Game = Class.extend({
 		return false;
 	},
 
+	isInBombZone: function(newX, newY) {
+		if (newX >= this.map.bombZone.x &&
+			newX <= this.map.bombZone.x + this.map.bombZone.width &&
+			newY >= this.map.bombZone.y &&
+			newY <= this.map.bombZone.y + this.map.bombZone.height) {
+			return true;
+		}
+		return false;
+	},
+
+	openStartDlg: function() {
+		var self = this;
+			self.showDialog("dialog-start", function() {
+			self.dialog.addEventListener("click", function(evt) {
+					switch (evt.target.id) {
+						case 'start':
+							self.closeDialog();
+							self.showDialog("dialog-diff", function() {
+								self.dialog.addEventListener("click", function(evt) {
+									switch (evt.target.id) {
+										case 'hard':
+											self.bulletStrengthModifier = 40;
+											self.npcHitpointModifier = 40 * 10;
+											break;
+										case 'medium':
+											self.bulletStrengthModifier = 10;
+											self.npcHitpointModifier = 10 * 7;
+											break;
+										case 'easy':
+											break;
+									}
+									self.initializeMap();
+									self.gameStarted = true;
+									self.playerAlive = true;
+									self.closeDialog();
+								});
+							});
+							break;
+						case 'ctrls':
+							self.closeDialog();
+							self.showDialog("dialog-controls", function() {
+								self.dialog.addEventListener("click", function(evt) {
+									if (evt.target.id == 'back') {
+										self.closeDialog();
+										self.openStartDlg.call(self);
+									}
+								});
+							});
+							break;
+					}
+				});
+			});
+		},
+
+		openFirstVictoryDlg: function() {
+		var self = this;
+			self.showDialog("dialog-victory-first", function() {
+			self.dialog.addEventListener("click", function(evt) {
+					switch (evt.target.id) {
+						case 'start':
+							self.closeDialog();
+							self.showDialog("dialog-diff", function() {
+								self.dialog.addEventListener("click", function(evt) {
+									switch (evt.target.id) {
+										case 'hard':
+											self.bulletStrengthModifier = 40;
+											self.npcHitpointModifier = 40 * 10;
+											break;
+										case 'medium':
+											self.bulletStrengthModifier = 10;
+											self.npcHitpointModifier = 10 * 7;
+											break;
+										case 'easy':
+											break;
+									}
+									self.initializeMap(self.player.hp);
+									self.gameStarted = true;
+									self.playerAlive = true;
+									self.exploded = false;
+									self.bombPlanted = false;
+									self.closeDialog();
+								});
+							});
+							break;
+						case 'ctrls':
+							self.closeDialog();
+							self.showDialog("dialog-controls", function() {
+								self.dialog.addEventListener("click", function(evt) {
+									if (evt.target.id == 'back') {
+										self.closeDialog();
+										self.openFirstVictoryDlg.call(self);
+									}
+								});
+							});
+							break;
+					}
+				});
+			});
+		},
+
+		openLastVictoryDlg: function() {
+		var self = this;
+			self.showDialog("dialog-victory-last", function() {
+			self.dialog.addEventListener("click", function(evt) {
+					switch (evt.target.id) {
+						case 'start':
+							self.closeDialog();
+							self.showDialog("dialog-diff", function() {
+								self.dialog.addEventListener("click", function(evt) {
+									switch (evt.target.id) {
+										case 'hard':
+											self.bulletStrengthModifier += 40;
+											self.npcHitpointModifier = 40 * 10;
+											break;
+										case 'medium':
+											self.bulletStrengthModifier += 10;
+											self.npcHitpointModifier = 10 * 7;
+											break;
+										case 'easy':
+											break;
+									}
+									self.resetAmmo();
+									self.initializeMap();
+									self.gameStarted = true;
+									self.playerAlive = true;
+									self.exploded = false;
+									self.bombPlanted = false;
+									self.closeDialog();
+								});
+							});
+							break;
+						case 'ctrls':
+							self.closeDialog();
+							self.showDialog("dialog-controls", function() {
+								self.dialog.addEventListener("click", function(evt) {
+									if (evt.target.id == 'back') {
+										self.closeDialog();
+										self.openLastVictoryDlg.call(self);
+									}
+								});
+							});
+							break;
+					}
+				});
+			});
+		},
+
+		openPauseDlg: function() {
+			var self = this;
+			this.showDialog('dialog-pause', function() {
+				self.paused = true;
+				self.dialog.addEventListener("click", function(evt) {
+					switch (evt.target.id) {
+						case 'resume':
+							self.paused = false;
+							self.closeDialog();
+							break;
+						case 'ctrls':
+							self.closeDialog();
+							self.showDialog("dialog-controls", function() {
+								self.dialog.addEventListener("click", function(evt) {
+									if (evt.target.id == 'back') {
+										self.closeDialog();
+										self.openPauseDlg.call(self);
+									}
+								});
+							});
+							break;
+					}
+				});
+			});
+		},
+
 	processKeyInput: function() {
+		if (!this.gameStarted || !this.playerAlive) return;
+
 		if (this.downKeys[38] || this.downKeys[87]) {  /* Up arrow or W was pressed */
 			var newY = this.player.y - PLAYER_SPEED;
 			if (newY > 0 &&
@@ -565,6 +844,26 @@ var Game = Class.extend({
 				this.player.reload();
 				this.playSound('m4-reload');
 			}
+		}
+
+		if (this.downKeys[27] && this.gameStarted) { /* esc was pressed */
+			var self = this;
+			if (this.paused) {
+				return;
+			}
+			this.openPauseDlg();
+		}
+
+		if (this.downKeys[69]) { /* E was pressed */
+			if (this.player.canPlantBomb) {
+				this.plantingBomb = true;
+			} else {
+				this.bombDelay = -1;
+				this.plantingBomb = false;
+			}
+		} else {
+			this.bombDelay = -1;
+			this.plantingBomb = false;
 		}
 
 		if (this.pressedKeys[81] || this.pressedKeys[113]) { /* Q was pressed */
@@ -627,12 +926,15 @@ var Game = Class.extend({
 	},
 
 	processMouseInput: function(evt) {
-        this.player.face(this.mouseX, this.mouseY);
-        this.crosshair.x = this.mouseX;
+		this.crosshair.x = this.mouseX;
         this.crosshair.y = this.mouseY;
 
+		if (!this.gameStarted || !this.playerAlive) return;
+
+        this.player.face(this.mouseX, this.mouseY);
+
 		if (this.mouseDown && this.player.gun == 'images/guns/m4a1.png') {
-			if (this.bulletDelay > 0) {
+			if (this.bulletDelay > 0) {	
 				this.bulletDelay--;
 				return;
 			}
@@ -705,6 +1007,14 @@ var Game = Class.extend({
 		source.buffer = buffer;                    // tell the source which sound to play
 		source.connect(this.audioCtx.destination);       // connect the source to the context's destination (the speakers)
 		source.noteOn(0);                          // play the source now
+	},
+
+	resetAmmo: function() {
+		for (var i = 0; i < this.player.guns.length; i++) {
+			var gun = this.player.guns[i];
+			gun.totalAmmo = gun.startingAmmo;
+			gun.ammo = gun.clipSize;
+		}
 	}
 
 

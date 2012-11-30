@@ -1,5 +1,7 @@
 var Gui = Drawable.extend({
 	player: null,
+	bombDelay: -1,
+	bombPlanted: false,
 
 	init: function(ctx, img) {
 		this._super(ctx, img);
@@ -81,11 +83,39 @@ var Gui = Drawable.extend({
 		this.ctx.shadowOffsetY = 0;
 		this.ctx.globalAlpha = 1;
 
+		// BOMB PROGRESS BAR
+		if (this.bombDelay >= 0 && !this.bombPlanted) {
+			var dim = {
+				width: this.bombDelay
+			}
+			this.ctx.beginPath();
+			this.ctx.rect(650 / 2 - (dim.width/2), 650/2 - 57, dim.width, 20);
+			this.ctx.fillStyle = 'red';
+			this.ctx.globalAlpha = 0.7;
+			this.ctx.fill();
+			this.ctx.stroke();
+		}
+
 		// NOTIFICATIONS
 		var text = null;
 		var subText = null;
+
+		if (this.player.canPlantBomb && !this.bombPlanted) {
+			text = 'HOLD "E" TO PLANT THE BOMB';
+			subText = 'Hurry! Soon more clones will spawn!';
+		}
+
+		if (this.bombDelay >= 0 && !this.bombPlanted) {
+			text = 'PLANTING BOMB...'
+			subText = null;
+		}
+
+		if (this.bombPlanted) {
+			text = 'BOMB PLANTED. RUN AWAY BEFORE IT EXPLODES!';
+		}
+
 		if (this.player.getGun().ammo <= 0 && this.player.getGun().totalAmmo > 0) {
-			text = 'PRESS "R" TO RELOAD'
+			text = 'PRESS "R" TO RELOAD';
 		}
 
 		if (this.player.getGun().totalAmmo <= 0 && this.player.getGun().ammo <= 0) {

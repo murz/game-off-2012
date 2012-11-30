@@ -5,21 +5,25 @@ var Player = Drawable.extend({
 	reloadDelay: 120,
 	reloadDelayCount: 0,
 	reloading: false,
+	canPlantBomb: false,
 	gun: 'images/guns/m4a1.png',
 	guns: {
 		'images/guns/m4a1.png': {
 			ammo: 30,
 			totalAmmo: 30 * 4,
+			startingAmmo: 30 * 4,
 			clipSize: 30,
 		},
 		'images/guns/deagle.png': {
 			ammo: 7,
 			totalAmmo: 7 * 5,
+			startingAmmo: 7 * 5,
 			clipSize: 7,
 		},
 		'images/guns/shotgun.png': {
 			ammo: 8,
 			totalAmmo: 8 * 5,
+			startingAmmo: 8 * 5,
 			clipSize: 8,
 		}
 	},

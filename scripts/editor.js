@@ -151,7 +151,7 @@ var LevelEditor = Class.extend({
 
 	render: function() {
 		// tiles
-		this.ctx.drawImage(assetManager.get('images/maps/forest.png'), 0, this.viewportY, 650, 3250);
+		this.ctx.drawImage(assetManager.get(this.map.bg), 0, this.viewportY, 650, 3250);
 
 	
 		// players
@@ -195,6 +195,18 @@ var LevelEditor = Class.extend({
 		this.ctx.globalAlpha = 0.5;
 		this.ctx.translate(this.map.bombZone.x,this.map.bombZone.y);
 		this.ctx.fillRect(0, 0, this.map.bombZone.width, this.map.bombZone.height);
+		this.ctx.restore();
+
+		this.ctx.save();
+		this.ctx.globalAlpha = 0.5;
+		this.ctx.translate(this.map.bombZone.x,this.map.bombZone.y);
+		this.ctx.fillRect(0, 0, 50, 50);
+		this.ctx.restore();
+
+		this.ctx.save();
+		this.ctx.globalAlpha = 0.5;
+		this.ctx.translate(this.map.cloneSpawn.x,this.map.cloneSpawn.y);
+		this.ctx.fillRect(0, 0, 42, 42);
 		this.ctx.restore();
 
 	},

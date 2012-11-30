@@ -23,19 +23,21 @@
 		<script type="text/javascript" src="scripts/editor.js"></script>
 
 		<!-- maps -->
-		<script type="text/javascript" src="maps/grass.js"></script>
+		<script type="text/javascript" src="maps/forest.js"></script>
+		<script type="text/javascript" src="maps/warehouse.js"></script>
 
 		<!-- load assets and start the game loop -->
 		<script type="text/javascript">
 			function start() {
 				document.getElementById("loading").style.display = "none";
 				var canvas = document.getElementById('editor-canvas');
-				var editor = new LevelEditor(canvas, GRASS_MAP);
+				var editor = new LevelEditor(canvas, FOREST_MAP);
 				editor.loop();
 			}
 
 			assetManager.load(
 				['images/maps/forest.png',
+				'images/maps/warehouse.png',
 				 'images/player1.png',
 				 'images/player3.png',
 				 'images/player3dead.png',
