@@ -35,7 +35,9 @@ An evil genius known as Dr. Git has been building an army of clones in a plot to
 * This includes sprites, tiles, game objects, and the HUD/GUI.
 
 ### Sounds
-* [`M4A1 Single.mp3` by Kibblesbob](http://soundbible.com/1804-M4A1-Single.html)
-* [`Reload.mp3` by LAGtheNoggin](http://www.freesound.org/people/LAGtheNoggin/sounds/15545/)
+* Bullet Shot: [`M4A1 Single.mp3` by Kibblesbob](http://soundbible.com/1804-M4A1-Single.html)
+* Reload Reload: [`Reload.mp3` by LAGtheNoggin](http://www.freesound.org/people/LAGtheNoggin/sounds/15545/)
 
+### Inspiration
+* Gameplay is heavily inspired by my days playing Counter-Strike as a kid :)
 
