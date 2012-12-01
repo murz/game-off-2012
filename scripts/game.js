@@ -208,6 +208,8 @@ var Game = Class.extend({
 	},
 
 	update: function() {
+		if (this.paused) return;
+
 		this.processKeyInput();
 		this.processMouseInput();
 
@@ -216,6 +218,10 @@ var Game = Class.extend({
 			var player = this.players[p];
 			if (!player.npc) {
 				continue;
+			}
+
+			if (player.y > 650 || player.y < 0) {
+				continue; // off -screen
 			}
 
 			if (!player.asleep) {
@@ -396,6 +402,7 @@ var Game = Class.extend({
 													case 'easy':
 														break;
 												}
+												self.map = FOREST_MAP;
 												self.initializeMap();
 												self.playerAlive = true;
 												self.gameStarted = true;
@@ -794,7 +801,7 @@ var Game = Class.extend({
 		},
 
 	processKeyInput: function() {
-		if (!this.gameStarted || !this.playerAlive) return;
+		if (!this.gameStarted || !this.playerAlive || this.paused) return;
 
 		if (this.downKeys[38] || this.downKeys[87]) {  /* Up arrow or W was pressed */
 			var newY = this.player.y - PLAYER_SPEED;
@@ -929,7 +936,7 @@ var Game = Class.extend({
 		this.crosshair.x = this.mouseX;
         this.crosshair.y = this.mouseY;
 
-		if (!this.gameStarted || !this.playerAlive) return;
+		if (!this.gameStarted || !this.playerAlive || this.paused) return;
 
         this.player.face(this.mouseX, this.mouseY);
 
