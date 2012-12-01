@@ -21,7 +21,7 @@ Move as quickly as possible, because the cloning machines will continue to spawn
 ### Code
 * Built using native JavaScript and HTML5 APIs (no frameworks, just hand-coded JS)
 * Visuals drawn using the HTML5 Canvas API
-* Audio played using the HTML5 Web Audio API (unfortunately this API only works in Chrome)
+* Audio played using the HTML5 Web Audio API (unfortunately this API [only works in WebKit browsers](http://caniuse.com/audio-api))
 * The only third-party code used is [John Resig's pattern for simple inheritance](https://github.com/murz/game-off-2012/blob/master/scripts/class.js).
 
 ### Graphics
