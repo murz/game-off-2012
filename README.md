@@ -24,7 +24,7 @@ An evil genius known as Dr. Git has been building an army of clones in a plot to
 
 ## Credits/Technologies
 ### Code
-* Built using native JavaScript and HTML5 APIs (no frameworks, just hand-coded JS)
+* Built using native JavaScript and HTML5 APIs (no frameworks, just old fashioned hand-coded JS)
 * Visuals rendered using the HTML5 Canvas API
 * Audio played using the HTML5 Web Audio API (unfortunately this API [only works in WebKit browsers](http://caniuse.com/audio-api))
 * UI dialogs rendered using DOM and CSS3
