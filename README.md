@@ -14,7 +14,7 @@ An evil genius known as Dr. Git has been building an army of clones in a plot to
 ## Screenshots
 ![Forest screenshot 1](http://cdn.murz.net/clone-war/screenshots/forest_1.png)
 ![Forest screenshot 2](http://cdn.murz.net/clone-war/screenshots/forest_2.png)
-![Warehouse screenshot 1](http://cdn.murz.net/clone-war/screenshots/warehouse_1.png)
+![Warehouse screenshot 1](http://cdn.murz.net/clone-war/screenshots/warehouse_1_f.png)
 ![Warehouse screenshot 2](http://cdn.murz.net/clone-war/screenshots/warehouse_3.png)
 ![Forest screenshot 3](http://cdn.murz.net/clone-war/screenshots/forest_3.png)
 
